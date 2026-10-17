@@ -6,7 +6,7 @@
 **Integrantes do Grupo:**
 - João Vitor Vieira Neves (Matrícula: 2023028633)
 - Matheus Costa Melo Silva (Matrícula: 2023087826)
-- Matheus Pimentel Kansaon (2022111561)
+- Matheus Pimentel Kansaon (Matrícula: 2022111561)
 
 ---
 
