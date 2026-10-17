@@ -1,4 +1,4 @@
-# TP1 - Indexação Geoespacial e Geometria Computacional Híbrida
+# TP1 - ALG2
 
 **Universidade Federal de Minas Gerais (UFMG)**  
 **Departamento de Ciência da Computação - Algoritmos 2**  
