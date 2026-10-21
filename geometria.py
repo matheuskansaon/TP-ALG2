@@ -26,10 +26,8 @@ TIMEOUT_OVERPASS_S = 120
 
 def _osmnx():
     """Importa e configura o osmnx só quando preciso (o import é lento e pesado)."""
-    import compat_macos
     import osmnx as ox
 
-    compat_macos.instalar_fallback_curl()
     ox.settings.use_cache = True
     ox.settings.log_console = False
     ox.settings.overpass_rate_limit = False

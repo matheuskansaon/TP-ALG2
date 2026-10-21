@@ -45,7 +45,7 @@ python app.py
 1. **Download Automático da Malha Viária:** Na primeira execução, caso `dados/malha_bh.graphml` ainda não exista no disco, o sistema baixará automaticamente a malha viária de Belo Horizonte via Overpass API (levando cerca de 1 a 2 minutos) e a salvará em `dados/malha_bh.graphml`. Nas execuções seguintes, o carregamento do disco leva apenas alguns segundos.
 2. Acesse o painel interativo no navegador em: **`http://127.0.0.1:8050/`**
 
-*(Opcional)* Caso deseje baixar ou atualizar a malha viária separadamente via linha de comando:
+* Caso a automação não funcione para baixar ou atualizar a malha viária separadamente via linha de comando:
 ```bash
 python scripts/baixar_malha.py
 ```
