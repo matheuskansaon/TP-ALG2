@@ -1,3 +1,6 @@
 __pycache__/
 cache/
 dados/malha_bh.graphml
+.venv/
+venv/
+.DS_Store
