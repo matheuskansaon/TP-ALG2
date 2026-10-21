@@ -84,7 +84,9 @@ class SimuladorFrota:
         self.restaurantes = pd.DataFrame()
         self.centros_demanda = []
         if geolocator is None:
+            import compat_macos
             from geopy.geocoders import Nominatim
+            compat_macos.instalar_fallback_curl()
             geolocator = Nominatim(user_agent="tp1_algoritmos_ufmg_v2")
         self.geolocator = geolocator
         self.arquivo_cache = arquivo_cache
