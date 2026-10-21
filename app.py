@@ -116,7 +116,8 @@ app.layout = dbc.Container([
                         tooltip={"placement": "bottom", "always_visible": True},
                         className="mb-4"
                     ),
-                    dbc.Button('Buscar Entregadores', id='btn-buscar', color="primary", className="w-100 fw-bold"),
+                    dbc.Button('Buscar Entregadores', id='btn-buscar', color="primary", className="w-100 fw-bold mb-2"),
+                    dbc.Button('Limpar Filtro / Ver Toda a Frota', id='btn-limpar-busca', color="outline-secondary", size="sm", className="w-100"),
                     html.Small("A primeira busca por um restaurante consulta o Nominatim (~1 s por tentativa); "
                                "as seguintes usam o cache.", className="text-muted d-block mt-2")
                 ])
@@ -218,13 +219,14 @@ def atualizar_opcoes(termo, selecionado):
     Output('metricas-resumo', 'children'),
     Input('btn-gerar', 'n_clicks'),
     Input('btn-buscar', 'n_clicks'),
+    Input('btn-limpar-busca', 'n_clicks'),
     State('input-n', 'value'),
     State('dropdown-restaurante', 'value'),
     State('slider-raio', 'value'),
     State('msg-geracao', 'children'),
     prevent_initial_call=True
 )
-def callback_principal(n_gerar, n_buscar, n_entregadores, restaurante_idx, raio_km, msg_atual):
+def callback_principal(n_gerar, n_buscar, n_limpar, n_entregadores, restaurante_idx, raio_km, msg_atual):
     acao = ctx.triggered_id
 
     # Ação 1: Gerar nova frota (descarta árvore anterior, limpa tabela e atualiza pinos no mapa)
@@ -238,6 +240,7 @@ def callback_principal(n_gerar, n_buscar, n_entregadores, restaurante_idx, raio_
 
         entregadores_gerados = simulador.gerar_entregadores(n_entregadores, geo_rotas)
         busca.indexar(motor_trie, entregadores_gerados)
+        stats_trie = motor_trie.estatisticas_compactacao()
 
         marcadores_novos = []
         for ent in entregadores_gerados:
@@ -256,7 +259,9 @@ def callback_principal(n_gerar, n_buscar, n_entregadores, restaurante_idx, raio_
         if limitado:
             msg += f" (N limitado ao máximo de {MAX_ENTREGADORES}.)"
         resumo_inicial = dbc.Alert(
-            f"Frota ativa: {len(entregadores_gerados)} entregadores indexados na Trie Compacta. Escolha um restaurante e clique em Buscar.",
+            f"Frota ativa: {len(entregadores_gerados)} entregadores indexados na Trie Compacta "
+            f"({stats_trie['nos_compactos']} nós compactos vs. {stats_trie['nos_padrao']} na Trie comum — "
+            f"redução de {stats_trie['reducao_pct']}%). Escolha um restaurante e clique em Buscar.",
             color="secondary", className="py-2 mb-0 text-center"
         )
         if not geo_rotas.ultima_projecao_aplicada:
@@ -266,6 +271,25 @@ def callback_principal(n_gerar, n_buscar, n_entregadores, restaurante_idx, raio_
                 resumo_inicial,
             ])
         return msg, marcadores_novos, [], centro_mapa, resumo_inicial
+
+    # Ação 1.5: Limpar filtro de busca e voltar a exibir toda a frota ativa
+    if acao == 'btn-limpar-busca':
+        todos_entregadores = motor_trie.buscar_prefixo("")
+        stats_trie = motor_trie.estatisticas_compactacao()
+        marcadores_frota = [
+            dl.Marker(
+                position=[ent['lat'], ent['lon']],
+                icon=ICONE_CINZA,
+                children=[dl.Tooltip(ent['id'])]
+            )
+            for ent in todos_entregadores
+        ]
+        resumo = dbc.Alert(
+            f"Filtro limpo. Exibindo {len(todos_entregadores)} entregadores da frota ativa "
+            f"({stats_trie['nos_compactos']} nós na Trie Compacta).",
+            color="secondary", className="py-2 mb-0 text-center"
+        )
+        return msg_atual, marcadores_frota, [], [-19.916681, -43.934493], resumo
 
     # Ação 2: Buscar entregadores próximos ao restaurante selecionado
     if restaurante_idx is None:
