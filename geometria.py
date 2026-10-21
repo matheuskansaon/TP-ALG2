@@ -15,14 +15,13 @@ CENTRO_BH = (-19.916681, -43.934493)
 ENDPOINTS_OVERPASS = [
     "https://overpass-api.de/api",
     "https://lz4.overpass-api.de/api",
+    "https://overpass.private.coffee/api",
 ]
-RODADAS_DOWNLOAD = 1
+RODADAS_DOWNLOAD = 2
 ESPERA_BASE_S = 3
-# Timeout de cada requisição ao Overpass ao abrir o app. O padrão do osmnx (180 s)
-# fazia o app esperar mais de 10 min antes de desistir quando os servidores estavam
-# fora. O scripts/baixar_malha.py usa valores mais pacientes (o osmnx repassa o
-# timeout também ao servidor, que aborta consultas mais longas que ele).
-TIMEOUT_OVERPASS_S = 60
+# Timeout de cada requisição ao Overpass ao abrir o app. Permite baixar a malha
+# automaticamente na 1ª execução diretamente pelo comando `python app.py`.
+TIMEOUT_OVERPASS_S = 120
 
 
 def _osmnx():
