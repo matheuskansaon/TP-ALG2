@@ -100,3 +100,12 @@ class ArvoreTrie:
     def limpar(self):
         """Descarta todos os nós para gerar uma nova frota."""
         self.raiz = NoTrie()
+
+    def contar_nos(self):
+        """Número de nós da árvore (sem contar a raiz). Útil para testes e análise."""
+        pilha, total = [self.raiz], 0
+        while pilha:
+            no = pilha.pop()
+            total += len(no.filhos)
+            pilha.extend(no.filhos.values())
+        return total
