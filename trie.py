@@ -109,3 +109,24 @@ class ArvoreTrie:
             total += len(no.filhos)
             pilha.extend(no.filhos.values())
         return total
+
+    def estatisticas_compactacao(self):
+        """
+        Compara o número de nós da Trie Compacta com o número de nós que uma Trie
+        padrão (1 caractere por aresta) teria para o mesmo conjunto de chaves.
+        """
+        pilha = [self.raiz]
+        nos_compactos = 0
+        nos_padrao = 0
+        while pilha:
+            no = pilha.pop()
+            for filho in no.filhos.values():
+                nos_compactos += 1
+                nos_padrao += len(filho.prefixo)
+                pilha.append(filho)
+        reducao = ((nos_padrao - nos_compactos) / nos_padrao * 100.0) if nos_padrao > 0 else 0.0
+        return {
+            "nos_compactos": nos_compactos,
+            "nos_padrao": nos_padrao,
+            "reducao_pct": round(reducao, 1),
+        }
